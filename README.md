@@ -1,3 +1,5 @@
+### About Docker
+
 "With Docker, developers can build any app in any language using any toolchain. “Dockerized” apps are completely portable and can run anywhere - colleagues’ OS X and Windows laptops, QA servers running Ubuntu in the cloud, and production data center VMs running Red Hat.
 
 Developers can get going quickly by starting with one of the 13,000+ apps available on Docker Hub. Docker manages and tracks changes and dependencies, making it easier for sysadmins to understand how the apps that developers build work. And with Docker Hub, developers can automate their build pipeline and share artifacts with collaborators through public or private repositories.
@@ -124,10 +126,14 @@ You can limit CPU, either using a percentage of all CPUs, or by using specific c
 
 For example, you can tell the cpu-shares setting. The setting is a bit strange -- 1024 means 100% of the CPU, so if you want the container to take 50% of all CPU cores, you should specify 512. See https://goldmann.pl/blog/2014/09/11/resource-management-in-docker/#_cpu for more:
 
+```
 docker run -it -c 512 agileek/cpuset-test
+```
 You can also only use some CPU cores using cpuset-cpus. See https://agileek.github.io/docker/2014/08/06/docker-cpuset/ for details and some nice videos:
 
+```
 docker run -it --cpuset-cpus=0,4,6 agileek/cpuset-test
+```
 Note that Docker can still see all of the CPUs inside the container -- it just isn't using all of them. See moby/moby#20770 for more details.
 
 Memory Constraints
@@ -148,7 +154,8 @@ Give access to all devices:
 docker run -it --privileged -v /dev/bus/usb:/dev/bus/usb debian bash
 More info about privileged containers here.
 
-Info
+### Info
+```
 docker ps shows running containers.
 docker logs gets logs from container. (You can use a custom log driver, but logs is only available for json-file and journald in 1.10).
 docker inspect looks at all the info on a container (including IP address).
@@ -158,30 +165,36 @@ docker top shows running processes in container.
 docker stats shows containers' resource usage statistics.
 docker diff shows changed files in the container's FS.
 docker ps -a shows running and stopped containers.
-
+```
 docker stats --all shows a list of all containers, default shows just running.
 
-Import / Export
+### Import / Export
+```
 docker cp copies files or folders between a container and the local filesystem.
+```
+```
 docker export turns container filesystem into tarball archive stream to STDOUT.
+```
 Executing Commands
+```
 docker exec to execute a command in container.
+```
 To enter a running container, attach a new shell process to a running container called foo, use: docker exec -it foo /bin/bash.
 
-Images
+**Images**
 Images are just templates for docker containers.
 
 Lifecycle
-docker images shows all images.
-docker import creates an image from a tarball.
-docker build creates image from Dockerfile.
-docker commit creates image from a container, pausing it temporarily if it is running.
-docker rmi removes an image.
-docker load loads an image from a tar archive as STDIN, including images and tags (as of 0.7).
-docker save saves an image to a tar archive stream to STDOUT with all parent layers, tags & versions (as of 0.7).
+**docker images-** shows all images.
+**docker import-** creates an image from a tarball.
+**docker build </tagname> -</dockerr repo> .** creates image from Dockerfile.
+**docker commit-** creates image from a container, pausing it temporarily if it is running.
+**docker rmi-** removes an image.
+**docker load <img id>-** loads an image from a tar archive as STDIN, including images and tags (as of 0.7).
+**docker save-** saves an image to a tar archive stream to STDOUT with all parent layers, tags & versions (as of 0.7).
 Info
-docker history shows history of image.
-docker tag tags an image to a name (local or registry).
+**docker history-** shows history of image.
+**docker tag <>-** tags an image to a name (local or registry).
 Cleaning up
 While you can use the docker rmi command to remove specific images, there's a tool called docker-gc that will safely clean up images that are no longer used by any containers. As of docker 1.13, docker image prune is also available for removing unused images. See Prune.
 
@@ -329,7 +342,9 @@ See advanced volumes for more details. Container42 is also helpful.
 
 You can map MacOS host directories as docker volumes:
 
+```
 docker run -v /Users/wsargent/myapp/src:/src
+```
 You can use remote NFS volumes if you're feeling brave.
 
 You may also consider running data-only containers as described here to provide some data portability.
@@ -341,9 +356,9 @@ Exposing incoming ports through the host container is fiddly but doable.
 
 This is done by mapping the container port to the host port (only using localhost interface) using -p:
 
-docker run -p 127.0.0.1:$HOSTPORT:$CONTAINERPORT \
-  --name CONTAINER \
-  -t someimage
+```
+docker run -p 127.0.0.1:$HOSTPORT:$CONTAINERPORT \--name CONTAINER \-t someimage
+```
 You can tell Docker that the container listens on the specified network ports at runtime by using EXPOSE:
 
 EXPOSE <CONTAINERPORT>
@@ -351,7 +366,9 @@ Note that EXPOSE does not expose the port itself - only -p will do that.
 
 To expose the container's port on your localhost's port, run:
 
-iptables -t nat -A DOCKER -p tcp --dport <LOCALHOSTPORT> -j DNAT --to-destination <CONTAINERIP>:<PORT>
+```
+docker -iptables -t nat -A DOCKER -p tcp --dport <LOCALHOSTPORT> -j DNAT --to-destination <CONTAINERIP>:<PORT>
+```
 If you're running Docker in Virtualbox, you then need to forward the port there as well, using forwarded_port. Define a range of ports in your Vagrantfile like this so you can dynamically map them:
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
